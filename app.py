@@ -55,8 +55,14 @@ st.write(f"**Cost after automation:** {cost_after:,.0f} THB/month")
 # Metric summary
 st.metric(label="Cost Saved", value=f"{cost_saving:,.0f} THB/month")
 
+# Bar Chart
 cost_diff = pd.DataFrame({
-    "Before" : cost_before,
-    "After" : cost_after
+    "Before" : [cost_before],
+    "After" : [cost_after]
 })
-st.bar_chart(cost_diff, x="Cost THB/month", y="Before and After Automation", color="site", stack=False)
+
+melted = pd.melt(cost_diff, var_name="Stage", value_name="Cost THB/month")
+melted["Stage"] = pd.Categorical(melted["Stage"], categories=["Before", "After"], ordered=True)
+melted = melted.sort_values("Stage")
+
+st.bar_chart(melted, x="Stage", y="Cost THB/month")
