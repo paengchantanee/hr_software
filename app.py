@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 st.title("HR Operation")
 st.write("Calculate the number of HR headquarter and the cost before and after using HR automation")
@@ -53,3 +54,9 @@ st.write(f"**Cost after automation:** {cost_after:,.0f} THB/month")
 
 # Metric summary
 st.metric(label="Cost Saved", value=f"{cost_saving:,.0f} THB/month")
+
+cost_diff = pd.DataFrame({
+    "Before" : cost_before,
+    "After" : cost_after
+})
+st.bar_chart(cost_diff, x="Cost THB/month", y="Before and After Automation", color="site", stack=False)
