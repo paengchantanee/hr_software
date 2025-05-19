@@ -7,7 +7,12 @@ st.subheader("What is HR Software?", divider=True)
 st.write("HR software helps manage human resources tasks like hiring, payroll, performance tracking, and more. It streamlines operations and improves productivity.")
 
 st.subheader("What Does This Calculator Do?", divider=True)
-st.write("This calculator estimates how much HR automation can reduce HR staffing needs and salary costs based on your industry and company size.")
+st.write("""
+This calculator estimates how much HR automation can reduce HR staffing needs and salary costs based on your industry and company size.
+
+A key factor in this calculation is **productivity gain** — the expected improvement in efficiency when routine HR tasks are automated.  
+For example, if automation improves productivity by 30%, your company may require fewer HR staff to manage the same number of employees, resulting in cost savings.
+""")
 
 # Input Section
 st.header("🚀 Let's Try It Out!")
@@ -20,7 +25,24 @@ industry = st.selectbox("🏭 Select your industry", [
     'general', 'leisure and hospitality', 'transport and utilities',
     'manufacturing', 'construction', 'health', 'education',
     'finance and insurance', 'business service', 'information', 'other services'
-])
+    ],
+    help="Different industries have varying HR needs. Sectors with stringent regulatory requirements, like healthcare and finance, may need a higher HR-to-employee ratio to maintain compliance."
+    )
+
+st.caption("Industry HR-to-employee ratios are based on data from [HiBob – HR to Employee Ratio](https://www.hibob.com/hr-glossary/hr-to-employee-ratio/)")
+
+st.info("""
+**Adjusting Productivity Gain**
+
+Use the slider below to estimate how much efficiency improves with HR automation.
+
+- A **higher percentage** reflects greater improvements (e.g., automating repetitive admin tasks).
+- A **lower percentage** reflects modest changes (e.g., partial digitalization).
+
+💡 If you're unsure, a **30% productivity gain** is a typical estimate for companies starting to adopt HR automation.
+""")
+
+
 productivity_gain = st.slider("⚙️ Productivity gain from HR automation (%)", 0.0, 1.0, 0.3, 0.05)
 
 # HR staff per 100 employees by industry
@@ -52,16 +74,20 @@ if st.button("Calculate Results"):
     cost_saving = cost_before - cost_after
     reduction_percent = ((total_hr - total_hr_after) / total_hr) * 100 if total_hr else 0
 
-    # Display Results
-    st.subheader("📊 Results")
-    st.caption("Before automation")
-    st.write(f"**HR needed:** {total_hr}")
-    st.write(f"**Monthly cost:** {cost_before:,.0f} THB")
-    st.write("---")
-    st.caption("After automation")
-    st.write(f"**HR needed:** {total_hr_after}")
+    # Display Results as Table
+    st.subheader("📊 Results Summary")
+
+    results_data = {
+        " ": ["HR Needed", "Monthly Cost (THB)"],
+        "Before Automation": [total_hr, f"{cost_before:,.0f}"],
+        "After Automation": [total_hr_after, f"{cost_after:,.0f}"]
+    }
+
+    results_df = pd.DataFrame(results_data)
+    results_df.set_index(" ", inplace=True)  # Set first column as index
+    st.table(results_df)
+
     st.write(f"**HR reduction:** {reduction_percent:.1f}%")
-    st.write(f"**Monthly cost:** {cost_after:,.0f} THB")
 
     # Summary Metric
     st.metric(label="🎉 Monthly Savings", value=f"{cost_saving:,.0f} THB")
@@ -77,3 +103,18 @@ if st.button("Calculate Results"):
     melted = melted.sort_values("Stage")
 
     st.bar_chart(melted, x="Stage", y="Cost (THB/month)")
+
+    # Explanation of Benefits
+    st.subheader("🔍 What This Means for You")
+    st.markdown("""
+    By adopting HR automation, your organization can:
+    
+    - **Reduce HR workload and staffing needs** by automating repetitive administrative tasks, improving efficiency.
+    - **Enhance the employee experience**, strengthen compliance, and accelerate processes.
+    - **Achieve greater HR cost-efficiency and save on monthly salary costs.**
+    - **Gain valuable data insights and increase scalability for growth.**
+    - **Improve data accuracy and reduce errors.**
+    - **Free up the HR team for strategic work.**
+  
+    💡 These improvements help modernize HR practices while supporting business growth.
+    """)
