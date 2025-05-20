@@ -47,7 +47,9 @@ Use the slider below to estimate how much efficiency improves with HR automation
         "row_hr": "HR Needed",
         "row_cost": "Monthly Cost (THB)",
         "reduction": "HR reduction",
-        "savings": "🎉 Monthly Savings",
+        "savings_monthly": "🎉 Monthly Savings",
+        "savings_yearly": "💰 Yearly Savings",
+        "savings_percent": "📈 Cost Savings (%)",
         "explain_header": "🔍 What This Means for You",
         "explain_body": """
 By adopting HR automation, your organization can:
@@ -104,7 +106,9 @@ By adopting HR automation, your organization can:
         "row_hr": "จำนวน HR ที่ต้องใช้",
         "row_cost": "ค่าใช้จ่ายรายเดือน (บาท)",
         "reduction": "จำนวน HR ที่ลดลง",
-        "savings": "🎉 ต้นทุนลดลง",
+        "savings_monthly": "🎉 เงินที่ประหยัดได้ต่อเดือน",
+        "savings_yearly": "💰 เงินที่ประหยัดได้ต่อปี",
+        "savings_percent": "📈 อัตราการประหยัดค่าใช้จ่าย (%)",
         "explain_header": "🔍 สิ่งนี้มีความหมายต่อองค์กรของคุณอย่างไร",
         "explain_body": """
 การนำระบบ HR อัตโนมัติมาใช้ องค์กรของคุณจะได้รับประโยชน์ดังนี้:
@@ -181,7 +185,9 @@ if st.button(t["button"]):
     # After automation
     total_hr_after = round(total_hr / (1 + productivity_gain))
     cost_after = total_hr_after * avg_hr_salary
-    cost_saving = cost_before - cost_after
+    cost_saving_monthly = cost_before - cost_after
+    cost_saving_yearly = cost_saving_monthly * 12
+    savings_percent = (cost_saving_monthly / cost_before) * 100 if cost_before > 0 else 0
     reduction_percent = ((total_hr - total_hr_after) / total_hr) * 100 if total_hr else 0
 
     # Result table
@@ -195,7 +201,9 @@ if st.button(t["button"]):
     st.table(results_df)
 
     st.write(f"**{t['reduction']}:** {reduction_percent:.1f}%")
-    st.metric(label=t["savings"], value=f"{cost_saving:,.0f} THB")
+    st.metric(label=t["savings_monthly"], value=f"{cost_saving_monthly:,.0f} THB")
+    st.metric(label=t["savings_yearly"], value=f"{cost_saving_yearly:,.0f} THB")
+    st.metric(label=t["savings_percent"], value=f"{savings_percent:.1f}%")
 
     # Bar chart
     cost_diff = pd.DataFrame({"Before": [cost_before], "After": [cost_after]})
